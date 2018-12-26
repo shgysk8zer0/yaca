@@ -7,7 +7,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 	constructor() {
 		super();
 		this.socket = undefined;
-		const shadow = this.attachShadow({mode: 'open'});
+		const shadow = this.attachShadow({mode: 'closed'});
 		importLink('chat-app-template').then(async link => {
 			await customElements.whenDefined('chat-log');
 			const nodes = [...link.content.querySelectorAll('body > *')].map(node => node.cloneNode(true));
@@ -27,7 +27,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 		this.addEventListener('message-received', async event => {
 			this.messageContainer.addMessage({text: event.detail.text, action: 'received'});
-			if (document.visibilityState !== 'visible') {
+			if (document.visibilityState !== 'visible' || ! this.open) {
 				const notification = await notify('Message Received', {
 					body: event.detail.text,
 					icon: new URL('img/octicons/comment.svg', document.baseURI),
@@ -55,7 +55,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 	get ready() {
 		return new Promise(resolve => {
-			if (this.shadowRoot instanceof Node) {
+			if (this.body instanceof Node) {
 				resolve();
 			} else {
 				this.addEventListener('load', () => resolve(), {once: true});
