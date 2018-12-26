@@ -53,6 +53,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.style.setProperty('--chat-header-color', color);
 	}
 
+	get messages() {
+		return this.messageContainer.messages;
+	}
+
 	get ready() {
 		return new Promise(resolve => {
 			if (this.body instanceof Node) {
@@ -152,6 +156,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 	async send({text = '', date = new Date()}) {
 		await wait(300);
 		return Promise.resolve({text, date});
+	}
+
+	clearMessages() {
+		this.messages.forEach(m => m.remove());
 	}
 }
 

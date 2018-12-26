@@ -24,6 +24,8 @@ export default class HTMLChatLogElement extends HTMLElement {
 		p.textContent = text;
 		time.textContent = date.toLocaleString();
 		time.dateTime = date.toISOString();
+		time.hidden = true;
+		el.addEventListener('click', () => time.toggleAttribute('hidden'), {passive: true});
 		el.slot = 'messages';
 		el.append(p, time);
 		el.classList.add('message', action);
