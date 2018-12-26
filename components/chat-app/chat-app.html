@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<style>
+			chat-header {
+				display: block;
+				padding: 0.5em;
+				background-color: var(--chat-header-background, #2c2c2c);
+				color: var(--chat-header-color, #cfcfcf);
+				border-radius: 12px 12px 0 0;
+				text-align: center;
+				text-transform: capitalize;
+				cursor: pointer;
+			}
+
+			.chat-body {
+				height: 0;
+				overflow-y: hidden;
+				--message-box-height: 5rem;
+				--message-log-height: 38vh;
+				transform-origin: bottom;
+				transition: height 400ms ease-in-out;
+			}
+
+			.chat-body.open {
+				overflow-y: auto;
+				height: calc(var(--message-log-height) + var(--message-box-height));
+			}
+
+			chat-log {
+				background-color: white;
+				height: var(--message-log-height);
+				display: block;
+				border: 1px solid #343434;
+				overflow: auto;
+			}
+
+			chat-box {
+				display: block;
+				height: var(--message-box-height);
+				background-color: white;
+				border: 1px solid #343434;
+				border-radius: 6px;
+			}
+
+			.message {
+				clear: both;
+				border: 1px solid rgb(106, 106, 106);
+				padding: 1.4em;
+				border-radius: 8px;
+				transition: opacity 250ms ease-in-out;
+			}
+
+			.sent {
+				background-color: var(--message-sent-background, rgb(101, 98, 240));
+				float: right;
+			}
+
+			.message.sending {
+				opacity: 0.4;
+			}
+
+			.received {
+				background-color: var(--message-received-background, rgb(166, 224, 189));
+				float: left;
+			}
+		</style>
+		<chat-header>
+			<slot name="label"></slot>
+		</chat-header>
+		<div class="chat-body">
+			<chat-log></chat-log>
+			<chat-box></chat-box>
+		</div>
+	</body>
+</html>

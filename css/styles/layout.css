@@ -1,0 +1,27 @@
+#header {
+	grid-area: header;
+}
+
+#nav {
+	grid-area: nav;
+}
+
+main {
+	grid-area: main;
+}
+
+#sidebar {
+	grid-area: sidebar;
+}
+
+#footer {
+	grid-area: footer;
+}
+
+chat-app {
+	position: absolute;
+	display: inline-block;
+	bottom: 0;
+	right: 5px;
+	width: 400px;
+}
