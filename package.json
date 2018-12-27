@@ -13,7 +13,8 @@
     "dir": {
       "css": "css/styles/",
       "js": "js/",
-      "img": "img/"
+      "img": "img/",
+      "components": "components"
     }
   },
   "repository": {
@@ -39,10 +40,10 @@
     "test": "npm run lint:js && npm run lint:css",
     "build": "npm run build:icons",
     "build:icons": "svg-sprite-generate -c icons.csv -o ${npm_package_config_dir_img}icons.svg",
-    "lint:css": "stylelint ${npm_package_config_dir_css}",
-    "lint:js": "eslint ${npm_package_config_dir_js}",
-    "fix:css": "stylelint ${npm_package_config_dir_css} --fix",
-    "fix:js": "eslint ${npm_package_config_dir_js} --fix",
+    "lint:css": "stylelint ${npm_package_config_dir_css} && stylelint ${npm_package_config_dir_components}",
+    "lint:js": "eslint ${npm_package_config_dir_js} && eslint ${npm_package_config_dir_components}",
+    "fix:css": "stylelint ${npm_package_config_dir_css} --fix && stylelint ${npm_package_config_dir_components} --fix",
+    "fix:js": "eslint ${npm_package_config_dir_js} --fix && eslint ${npm_package_config_dir_components} --fix",
     "fix": "npm run fix:js && npm run fix:css"
   },
   "devDependencies": {

@@ -13,7 +13,7 @@ export async function importLinks() {
 					name: link.name,
 					content: link.import,
 					source: new URL(link.href),
-				})
+				});
 			}
 		});
 	}));
@@ -34,7 +34,7 @@ export async function importLink(name) {
 					name: link.name,
 					content: link.import,
 					source: new URL(link.href),
-				})
+				});
 			}
 		});
 	} else {
