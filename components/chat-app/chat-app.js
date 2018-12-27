@@ -1,9 +1,10 @@
 import {importLink} from '../../js/functions.js';
-import {notify, wait} from '../../js/std-js/functions.js';
+import {notify} from '../../js/std-js/functions.js';
 import '../chat-log/chat-log.js';
 import '../chat-box/chat-box.js';
 
 export default class HTMLChatAppElement extends HTMLElement {
+
 	constructor() {
 		super();
 		this.socket = undefined;
@@ -19,6 +20,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 			this.dispatchEvent(new Event('load'));
 			this.header.addEventListener('click', () => this.toggleAttribute('open'));
 			this.messageBox.addEventListener('message', async event => {
+				await this.connected;
 				await this.messageContainer.addMessage({text: event.detail.text, action: 'sent', date: event.detail.time});
 				await this.send(event.detail);
 				this.dispatchEvent(new CustomEvent('message-sent', {detail: event.detail}));
@@ -26,6 +28,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 		});
 
 		this.addEventListener('message-received', async event => {
+			await this.connected;
 			this.messageContainer.addMessage({text: event.detail.text, action: 'received'});
 			if (document.visibilityState !== 'visible' || ! this.open) {
 				const notification = await notify('Message Received', {
@@ -33,6 +36,56 @@ export default class HTMLChatAppElement extends HTMLElement {
 					icon: new URL('img/octicons/comment.svg', document.baseURI),
 				});
 				notification.addEventListener('click', () => this.open = true);
+			}
+		});
+	}
+
+	connectedCallback() {
+		this.connect();
+	}
+
+	disconnectedCallback() {
+		if (this.socket instanceof WebSocket) {
+			this.socket.close();
+			this.socket = undefined;
+		}
+	}
+
+	async connect() {
+		await new Promise((resolve, reject) => {
+			if (! (this.socket instanceof WebSocket)) {
+				const url = new URL(this.src, document.baseURI);
+				url.port = this.port;
+				url.protocol = this.secure ? 'wss:' : 'ws:';
+				this.socket = new WebSocket(url);
+
+				this.socket.addEventListener('close', event => {
+					this.remove();
+					this.socket = undefined;
+					notify('Connection closed', {
+						body: event.reason || 'Try refreshing the page to reconnect',
+					});
+				});
+
+				this.socket.addEventListener('message', msg => {
+					const {message, event} = JSON.parse(msg.data);
+					switch(event) {
+					case 'message':
+						this.dispatchEvent(new CustomEvent('message-received', {detail: {
+							text: message,
+						}}));
+						break;
+					default: throw new Error(`Unhandled event: "${event}"`);
+					}
+				});
+
+				this.socket.addEventListener('connect', () => resolve(this.socket));
+				this.socket.addEventListener('error', event => {
+					this.socket.close();
+					reject(event);
+				});
+			} else {
+				resolve(this.socket);
 			}
 		});
 	}
@@ -68,7 +121,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 	}
 
 	get connected() {
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
+			await this.ready;
 			if (this.socket === undefined) {
 				this.addEventListener('connected', () => resolve());
 				this.addEventListener('error', reject);
@@ -79,7 +133,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 	}
 
 	get port() {
-		return parseInt(this.getAttribute('port'));
+		return parseInt(this.getAttribute('port')) || parseInt(location.port);
 	}
 
 	set port(num) {
@@ -87,7 +141,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 	}
 
 	get src() {
-		return this.getAttribute('src');
+		return this.getAttribute('src') || '/';
 	}
 
 	set src(src) {
@@ -95,7 +149,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 	}
 
 	get secure() {
-		return this.hasAttribute('secure');
+		return this.hasAttribute('secure') || location.protocol === 'https:';
 	}
 
 	set secure(secure) {
@@ -153,9 +207,9 @@ export default class HTMLChatAppElement extends HTMLElement {
 		});
 	}
 
-	async send({text = '', date = new Date()}) {
-		await wait(300);
-		return Promise.resolve({text, date});
+	async send({text = '', event = 'message', time = new Date()}) {
+		time = time.toISOString();
+		this.socket.send(JSON.stringify({text, event, time}));
 	}
 
 	clearMessages() {
