@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<style>
+			@import url("/css/core-css/element.css");
+			@import url("/css/core-css/class-rules.css");
+		</style>
+		<form>
+			<fieldset>
+				<legend>
+					<slot name="legend">Register</slot>
+				</legend>
+				<div title="Name">
+					<label for="register-name">
+						<slot name="name-label">Name</slot>
+					</label>
+					<input type="text" name="name" placeholder="First Last" required="" />
+				</div>
+				<div title="Email">
+					<label for="register-email">
+						<slot name="email-label"></slot>
+					</label>
+					<input type="email" name="email" id="register-email" placeholder="user@example.com" autocomplete="email" required="" />
+				</div>
+				<div title="Password">
+					<label for="register-password">
+						<slot name="password-label"></slot>
+					</label>
+					<input type="password" name="password" id="register-password" placeholder="********" minlength="8" maxlength="72" autocomplete="new-password" required="" />
+				</div>
+				<input type="hidden" name="role">
+			</fieldset>
+			<button type="submit" title="Submit" class="btn btn-accept">
+				<slot name="submit-btn">Submit</slot>
+			</button>
+			<button type="reset" title="Cancel" class="btn btn-reject">
+				<slot name="reset-btn">Cancel</slot>
+			</button>
+		</form>
+	</body>
+</html>
