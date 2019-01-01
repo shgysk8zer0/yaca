@@ -68,6 +68,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 				});
 
 				this.socket.addEventListener('message', msg => {
+					const json = JSON.parse(msg.data);
+					console.log(json);
 					const {message, event} = JSON.parse(msg.data);
 					switch(event) {
 					case 'message':
@@ -209,7 +211,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 	async send({text = '', event = 'message', time = new Date()}) {
 		time = time.toISOString();
-		this.socket.send(JSON.stringify({text, event, time}));
+		this.socket.send(JSON.stringify({message: text, event, time}));
 	}
 
 	clearMessages() {
