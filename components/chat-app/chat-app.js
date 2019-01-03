@@ -1,7 +1,6 @@
 import {importLink} from '../../js/functions.js';
 import {notify} from '../../js/std-js/functions.js';
 import '../chat-log/chat-log.js';
-import '../chat-box/chat-box.js';
 
 export default class HTMLChatAppElement extends HTMLElement {
 
@@ -15,16 +14,20 @@ export default class HTMLChatAppElement extends HTMLElement {
 			[...link.content.body.children].forEach(child => shadow.append(child));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
-			this.messageBox = shadow.querySelector('chat-box');
+			shadow.querySelector('form').addEventListener('submit', async event => {
+				event.preventDefault();
+				await this.connected;
+				const form = new FormData(event.target);
+				const data = Object.fromEntries(form.entries());
+				event.target.reset();
+				data.time = new Date();
+				await this.messageContainer.addMessage({text: data.text, action: 'sent', date: data.time});
+				await this.send(data);
+				this.dispatchEvent(new CustomEvent('message-sent', {detail: data}));
+			});
 			this.body = shadow.querySelector('.chat-body');
 			this.dispatchEvent(new Event('load'));
 			this.header.addEventListener('click', () => this.toggleAttribute('open'));
-			this.messageBox.addEventListener('message', async event => {
-				await this.connected;
-				await this.messageContainer.addMessage({text: event.detail.text, action: 'sent', date: event.detail.time});
-				await this.send(event.detail);
-				this.dispatchEvent(new CustomEvent('message-sent', {detail: event.detail}));
-			});
 		});
 
 		this.addEventListener('message-received', async event => {

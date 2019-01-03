@@ -2,9 +2,9 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8" />
-	</head>
-	<body>
 		<style>
+			@import url("/css/core-css/element.css");
+			@import url("/css/core-css/class-rules.css");
 			chat-header {
 				display: block;
 				padding: 0.5em;
@@ -38,9 +38,10 @@
 				overflow: auto;
 			}
 
-			chat-box {
+			[name="text"] {
 				display: block;
 				height: var(--message-box-height);
+				width: 100%;
 				padding: 0.3em;
 				background-color: white;
 				border: 1px solid #343434;
@@ -70,12 +71,20 @@
 				float: left;
 			}
 		</style>
-		<chat-header role="button">
+	</head>
+	<body>
+		<chat-header class="cursor-pointer">
 			<slot name="label">Chat</slot>
 		</chat-header>
 		<div class="chat-body">
 			<chat-log></chat-log>
-			<chat-box></chat-box>
+			<form class="flex row">
+				<textarea name="text" placeholder="Type your message here..." required=""></textarea>
+				<input type="hidden" name="event" value="message" />
+				<button type="submit">
+					<slot name="submit-btn">Submit</slot>
+				</button>
+			</form>
 		</div>
 	</body>
 </html>

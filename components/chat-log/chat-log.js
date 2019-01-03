@@ -5,7 +5,6 @@ export default class HTMLChatLogElement extends HTMLElement {
 		super();
 		this.attachShadow({mode: 'open'});
 		importLink('chat-log-template').then(link => {
-			console.log([...link.content.body.children]);
 			[...link.content.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 			[...link.content.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 		});

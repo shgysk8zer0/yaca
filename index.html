@@ -22,7 +22,11 @@
 				<span>&copy;</span>
 				<time is="current-year"></time>
 			</div>
-			<chat-app label="support" port="3000" src="index.js"></chat-app>
+			<chat-app label="support" port="3000" src="index.js">
+				<svg class="current-color icon" slot="submit-btn">
+					<use xlink:href="img/icons.svg#send-to" />
+				</svg>
+			</chat-app>
 		</footer>
 		<dialog id="login-form-dialog">
 			<login-form>
