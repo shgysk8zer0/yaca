@@ -3,9 +3,17 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
+		<meta name="msapplication-TileColor" content="#2b5797">
+		<meta name="theme-color" content="#1b5fcb">
 		<title>YACA</title>
 		<script type="module" src="js/index.js" async=""></script>
 		<link rel="stylesheet" href="css/styles/index.css" media="all" />
+		<link rel="icon" type="image/svg+xml" sizes="any" href="img/favicon.svg" />
+		<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="img/icon-16.png" />
+		<link rel="manifest" href="manifest.json" />
+		<link rel="mask-icon" href="img/safari-pinned-tab.svg" color="#1b5fcb" />
 		<link rel="import" href="components/chat-app/chat-app.html" name="chat-app-template" async="" />
 		<link rel="import" href="components/chat-log/chat-log.html" name="chat-log-template" async="" />
 		<link rel="import" href="components/login-form/login-form.html" name="login-form-template" async="" />
@@ -22,7 +30,7 @@
 				<span>&copy;</span>
 				<time is="current-year"></time>
 			</div>
-			<chat-app label="support" port="3000" src="index.js">
+			<chat-app label="support" port="3000" src="index.js" sender-color="red" recipient-color="blue">
 				<svg class="current-color icon" slot="submit-btn">
 					<use xlink:href="img/icons.svg#send-to" />
 				</svg>
