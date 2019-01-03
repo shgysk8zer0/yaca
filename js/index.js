@@ -13,6 +13,6 @@ customElements.whenDefined('login-form').then(() => {
 });
 
 customElements.whenDefined('registration-form').then(() => {
-	document.getElementById('registration-form-dialog').showModal();
+	// document.getElementById('registration-form-dialog').showModal();
 	document.querySelector('registration-form').addEventListener('reset', event => event.target.closest('dialog').close());
 });
