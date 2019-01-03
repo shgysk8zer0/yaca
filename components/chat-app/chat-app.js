@@ -36,7 +36,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 			if (document.visibilityState !== 'visible' || ! this.open) {
 				const notification = await notify('Message Received', {
 					body: event.detail.text,
-					icon: new URL('img/octicons/comment.svg', document.baseURI),
+					icon: new URL('img/chat.svg', document.baseURI),
 				});
 				notification.addEventListener('click', () => this.open = true);
 			}
