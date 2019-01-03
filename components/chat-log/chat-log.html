@@ -2,8 +2,6 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="utf-8" />
-	</head>
-	<body>
 		<style>
 			.message {
 				clear: both;
@@ -20,6 +18,10 @@
 				float: left;
 			}
 		</style>
-		<slot name="messages"></slot>
+	</head>
+	<body>
+		<div>
+			<slot name="messages"></slot>
+		</div>
 	</body>
 </html>

@@ -11,8 +11,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 		const shadow = this.attachShadow({mode: 'closed'});
 		importLink('chat-app-template').then(async link => {
 			await customElements.whenDefined('chat-log');
-			const nodes = [...link.content.querySelectorAll('body > *')].map(node => node.cloneNode(true));
-			shadow.append(...nodes);
+			[...link.content.head.children].forEach(child => shadow.append(child));
+			[...link.content.body.children].forEach(child => shadow.append(child));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
 			this.messageBox = shadow.querySelector('chat-box');

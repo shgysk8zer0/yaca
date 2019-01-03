@@ -4,8 +4,9 @@ export default class HTMLLoginFormElement extends HTMLElement {
 	constructor() {
 		super();
 		importLink('login-form-template').then(async form => {
-			const nodes = [...form.content.querySelectorAll('body > *')].map(node => node.cloneNode(true));
-			this.attachShadow({mode: 'open'}).append(...nodes);
+			this.attachShadow({mode: 'open'});
+			[...form.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...form.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 			this.form.addEventListener('submit', async event => {
 				event.preventDefault();
 				try {

@@ -3,9 +3,11 @@ import {importLink} from '../../js/functions.js';
 export default class HTMLChatLogElement extends HTMLElement {
 	constructor() {
 		super();
-		const shadow = this.attachShadow({mode: 'open'});
+		this.attachShadow({mode: 'open'});
 		importLink('chat-log-template').then(link => {
-			[...link.content.body.querySelectorAll('body > *')].forEach(el => shadow.append(el));
+			console.log([...link.content.body.children]);
+			[...link.content.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...link.content.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 		});
 	}
 
