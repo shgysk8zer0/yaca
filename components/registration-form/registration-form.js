@@ -1,12 +1,12 @@
-import {importLink} from '../../js/functions.js';
+import {importLink} from '../../js/std-js/functions.js';
 
 export default class HTMLRegistrationFormElement extends HTMLElement {
 	constructor() {
 		super();
 		importLink('registration-form-template').then(async form => {
 			this.attachShadow({mode: 'open'});
-			[...form.content.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
-			[...form.content.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...form.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...form.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 			this.form.addEventListener('submit', async event => {
 				event.preventDefault();
 				try {

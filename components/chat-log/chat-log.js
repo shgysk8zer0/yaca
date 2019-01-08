@@ -1,12 +1,12 @@
-import {importLink} from '../../js/functions.js';
+import {importLink} from '../../js/std-js/functions.js';
 
 export default class HTMLChatLogElement extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({mode: 'open'});
 		importLink('chat-log-template').then(link => {
-			[...link.content.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
-			[...link.content.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...link.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
+			[...link.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 		});
 	}
 

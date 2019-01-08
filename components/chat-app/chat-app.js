@@ -1,5 +1,5 @@
-import {importLink} from '../../js/functions.js';
-import {notify} from '../../js/std-js/functions.js';
+// import {importLink} from '../../js/functions.js';
+import {notify, importLink} from '../../js/std-js/functions.js';
 import '../chat-log/chat-log.js';
 
 export default class HTMLChatAppElement extends HTMLElement {
@@ -10,8 +10,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 		const shadow = this.attachShadow({mode: 'closed'});
 		importLink('chat-app-template').then(async link => {
 			await customElements.whenDefined('chat-log');
-			[...link.content.head.children].forEach(child => shadow.append(child));
-			[...link.content.body.children].forEach(child => shadow.append(child));
+			[...link.head.children].forEach(child => shadow.append(child));
+			[...link.body.children].forEach(child => shadow.append(child));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
 			shadow.querySelector('form').addEventListener('submit', async event => {
@@ -57,10 +57,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 	async connect() {
 		await new Promise((resolve, reject) => {
 			if (! (this.socket instanceof WebSocket)) {
-				const url = new URL(this.src, document.baseURI);
-				url.port = this.port;
-				url.protocol = this.secure ? 'wss:' : 'ws:';
-				this.socket = new WebSocket(url);
+				this.socket = new WebSocket(this.src);
 
 				this.socket.addEventListener('close', event => {
 					this.remove();
@@ -146,7 +143,14 @@ export default class HTMLChatAppElement extends HTMLElement {
 	}
 
 	get src() {
-		return this.getAttribute('src') || '/';
+		const url = new URL(this.getAttribute('src'), document.baseURI);
+		if (this.hasAttribute('port')) {
+			url.port = this.port;
+		}
+		if (! url.protocol.startsWith('ws')) {
+			url.protocol = this.secure ? 'wss:' : 'ws:';
+		}
+		return url;
 	}
 
 	set src(src) {
@@ -199,6 +203,9 @@ export default class HTMLChatAppElement extends HTMLElement {
 				break;
 			case 'open':
 				this.body.classList.toggle('open', newValue === '');
+				if (newValue === '') {
+					this.body.querySelector('[name="text"]').focus();
+				}
 				break;
 			case 'header-background':
 				this.headerBackground = newValue;
@@ -207,7 +214,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 				this.headercolor = newValue;
 				break;
 			default:
-				throw new Error(`Unhandled attribute change: {name: ${name}, oldValue: ${oldValue}, newValue: ${newValue}}`);
+				throw new Error(`Unhandled attribute change: ${JSON.stringify({name, oldValue, newValue})}`);
 			}
 		});
 	}
