@@ -56,6 +56,9 @@ export default class HTMLChatLogElement extends HTMLElement {
 	}
 
 	async addAttachment({size, contentType, time, data, name, message = '', action = 'received'} = {}) {
+		if (! contentType.startsWith('image/')) {
+			throw new TypeError(`Expected Content-Type to match image but got "${contentType}"`);
+		}
 		const a = document.createElement('a');
 		const img = document.createElement('img');
 		const figure = document.createElement('figure');
