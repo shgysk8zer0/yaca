@@ -68,7 +68,7 @@ export default class HTMLChatLogElement extends HTMLElement {
 		a.download = name;
 		a.dataset.size = size;
 		time = new Date(time);
-		img.src = `data:${contentType};base64,${btoa(data)}`;
+		img.src = data;
 		a.href = img.src;
 		a.role = 'button';
 		a.textContent = `Download "${name}"`;

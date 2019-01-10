@@ -50,10 +50,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 			await this.connected;
 			this.messageContainer.addAttachment(event.detail);
 			if (event.detail.action === 'received' && document.visibilityState !== 'visible' || ! this.open) {
-				let {name, data, contentType} = event.detail;
+				let {name, data} = event.detail;
 				const notification = await notify('Attachment Received', {
 					body: name,
-					icon: `data:${contentType};base64,${btoa(data)}`,
+					icon: data,
 				});
 				notification.addEventListener('click', () => this.open = true);
 			}
@@ -265,7 +265,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 					message,
 				}));
 				reader.addEventListener('error', reject);
-				reader.readAsBinaryString(attachment);
+				reader.readAsDataURL(attachment);
 			}
 		});
 		this.socket.send(JSON.stringify(msg));
