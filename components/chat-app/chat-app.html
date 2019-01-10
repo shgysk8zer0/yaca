@@ -25,6 +25,13 @@
 				transition: height 400ms ease-in-out;
 			}
 
+			.btns > * {
+				flex-grow: 1;
+				margin-bottom: 0.1rem;
+				flex-basis: auto;
+				vertical-align: middle;
+			}
+
 			.chat-body.open {
 				overflow-y: auto;
 				height: calc(var(--message-log-height) + var(--message-box-height));

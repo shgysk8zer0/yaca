@@ -49,10 +49,11 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.addEventListener('attachment', async event => {
 			await this.connected;
 			this.messageContainer.addAttachment(event.detail);
-			if (document.visibilityState !== 'visible' || ! this.open) {
+			if (event.detail.action === 'received' && document.visibilityState !== 'visible' || ! this.open) {
+				let {name, data, contentType} = event.detail;
 				const notification = await notify('Attachment Received', {
-					body: event.detail.text,
-					icon: new URL('img/chat.svg', document.baseURI),
+					body: name,
+					icon: `data:${contentType};base64,${btoa(data)}`,
 				});
 				notification.addEventListener('click', () => this.open = true);
 			}
