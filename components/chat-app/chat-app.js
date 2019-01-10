@@ -10,8 +10,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 		const shadow = this.attachShadow({mode: 'closed'});
 		importLink('chat-app-template').then(async link => {
 			await customElements.whenDefined('chat-log');
-			[...link.head.children].forEach(child => shadow.append(child));
-			[...link.body.children].forEach(child => shadow.append(child));
+			[...link.head.children].forEach(child => shadow.append(child.cloneNode(true)));
+			[...link.body.children].forEach(child => shadow.append(child.cloneNode(true)));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
 			shadow.querySelector('form').addEventListener('submit', async event => {
@@ -20,10 +20,14 @@ export default class HTMLChatAppElement extends HTMLElement {
 				const form = new FormData(event.target);
 				const data = Object.fromEntries(form.entries());
 				event.target.reset();
-				data.time = new Date();
-				await this.messageContainer.addMessage({text: data.text, action: 'sent', date: data.time});
-				await this.send(data);
-				this.dispatchEvent(new CustomEvent('message-sent', {detail: data}));
+				if (data.attachment instanceof File) {
+					await this.attach(data);
+				} else {
+					data.time = new Date();
+					await this.messageContainer.addMessage({text: data.text, action: 'sent', date: data.time});
+					await this.send(data);
+					this.dispatchEvent(new CustomEvent('message-sent', {detail: data}));
+				}
 			});
 			this.body = shadow.querySelector('.chat-body');
 			this.dispatchEvent(new Event('load'));
@@ -35,6 +39,18 @@ export default class HTMLChatAppElement extends HTMLElement {
 			this.messageContainer.addMessage({text: event.detail.text, action: 'received'});
 			if (document.visibilityState !== 'visible' || ! this.open) {
 				const notification = await notify('Message Received', {
+					body: event.detail.text,
+					icon: new URL('img/chat.svg', document.baseURI),
+				});
+				notification.addEventListener('click', () => this.open = true);
+			}
+		});
+
+		this.addEventListener('attachment', async event => {
+			await this.connected;
+			this.messageContainer.addAttachment(event.detail);
+			if (document.visibilityState !== 'visible' || ! this.open) {
+				const notification = await notify('Attachment Received', {
 					body: event.detail.text,
 					icon: new URL('img/chat.svg', document.baseURI),
 				});
@@ -70,14 +86,59 @@ export default class HTMLChatAppElement extends HTMLElement {
 				this.socket.addEventListener('message', msg => {
 					const json = JSON.parse(msg.data);
 					console.log(json);
-					const {message, event} = JSON.parse(msg.data);
-					switch(event) {
+					switch (json.event) {
 					case 'message':
+						let {message, contentType = 'text/plain', time = new Date()} = JSON.parse(msg.data);
 						this.dispatchEvent(new CustomEvent('message-received', {detail: {
 							text: message,
+							contentType,
+							time,
 						}}));
 						break;
-					default: throw new Error(`Unhandled event: "${event}"`);
+					case 'attachment':
+						try {
+							let {size, contentType, time, data, name, message = '', action = 'received'} = json;
+							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, message, action}}));
+							// const a = document.createElement('a');
+							// a.classList.add('inline-block', 'btn');
+							// a.download = name;
+							// time = new Date(time);
+							// console.log({size, contentType, time, data, name});
+							// const img = document.createElement('img');
+							// img.src = `data:${contentType};base64,${btoa(data)}`;
+							// a.href = img.src;
+							// a.role = 'button';
+							// a.textContent = `Download "${name}"`;
+							// img.alt = name;
+							// const figure = document.createElement('figure');
+							// const timeEl = document.createElement('time');
+							// const figCap = document.createElement('figcaption');
+							// timeEl.textContent = time.toLocaleString();
+							// timeEl.dateTime = time.toISOString();
+							// timeEl.hidden = true;
+							// figure.addEventListener('click', () => timeEl.hidden = ! timeEl.hidden);
+							// figure.slot = 'messages';
+							// figure.classList.add('message', 'received');
+							// if (message !== '') {
+							// 	const p = document.createElement('p');
+							// 	p.textContent = message;
+							// 	figCap.append(p);
+							// }
+							// figCap.append(timeEl, a);
+							// img.addEventListener('load', () => {
+							// 	img.addEventListener('dblclick', () => open(img.src));
+							// 	img.classList.add('cursor-pointer');
+							// 	URL.revokeObjectURL(img.src);
+							// 	figure.append(img, figCap);
+							// 	figure.scrollIntoView({block: 'start', behavior: 'smooth'});
+							// }, {once: true});
+							// img.addEventListener('error', console.error);
+							// this.messageContainer.append(figure);
+						} catch (err) {
+							console.error(err);
+						}
+						break;
+					default: throw new Error(`Unhandled event: "${json.event}"`);
 					}
 				});
 
@@ -219,9 +280,33 @@ export default class HTMLChatAppElement extends HTMLElement {
 		});
 	}
 
-	async send({text = '', event = 'message', time = new Date()}) {
-		time = time.toISOString();
-		this.socket.send(JSON.stringify({message: text, event, time}));
+	async send({text = '', contentType = 'text/plain', event = 'message', time = new Date()}) {
+		this.socket.send(JSON.stringify({message: text, contentType, event, time: time.toISOString()}));
+	}
+
+	async attach({attachment, time = new Date(), message = ''}) {
+		const msg = await new Promise((resolve, reject) => {
+			if (! (attachment instanceof File)) {
+				reject(new TypeError('Attachment must be a File'));
+			} else {
+				const reader = new FileReader();
+				reader.addEventListener('load', event => resolve({
+					event: 'attachment',
+					size: attachment.size,
+					contentType: attachment.type,
+					name: attachment.name,
+					data: event.target.result,
+					time,
+					message,
+				}));
+				reader.addEventListener('error', reject);
+				reader.readAsBinaryString(attachment);
+
+			}
+		});
+		this.socket.send(JSON.stringify(msg));
+		msg.action = 'sent';
+		this.dispatchEvent(new CustomEvent('attachment', {detail: msg}));
 	}
 
 	clearMessages() {

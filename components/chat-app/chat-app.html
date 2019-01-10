@@ -83,16 +83,29 @@
 			<form class="flex row">
 				<textarea name="text" placeholder="Type your message here..." required=""></textarea>
 				<input type="hidden" name="event" value="message" />
-				<button type="submit" class="btn btn-primary">
-					<slot name="submit-btn">
-						<svg class="current-color icon" viewBox="0 0 16 16">
-							<g transform="translate(-41 -907)">
-								<path d="M47 907l-4.004 2.6 2.338.364-2.01 5.806c2.241-.432 4.384.76 4.898 3.253l4.644-4.601L54 916.117 55 911l-4.814.195 1.271 1.568L47 915.508l.608-4.984 2.215.455z"/>
-								<rect width="4.994" height="4.994" x="41.994" y="917.02" display="block" rx="2.497" ry="2.497" solid-color="#000000"/>
-							</g>
+				<div class="btns flex column">
+					<input type="file" id="chat-attachment" name="attachment" accept="image/*" hidden="" />
+					<button type="submit" class="btn btn-primary">
+						<slot name="submit-btn">
+							<svg class="current-color icon" viewBox="0 0 16 16">
+								<g transform="translate(-41 -907)">
+									<path d="M47 907l-4.004 2.6 2.338.364-2.01 5.806c2.241-.432 4.384.76 4.898 3.253l4.644-4.601L54 916.117 55 911l-4.814.195 1.271 1.568L47 915.508l.608-4.984 2.215.455z"/>
+									<rect width="4.994" height="4.994" x="41.994" y="917.02" display="block" rx="2.497" ry="2.497" solid-color="#000000"/>
+								</g>
+							</svg>
+						</slot>
+					</button>
+					<br />
+					<label for="chat-attachment" role="button" class="btn btn-default" title="Add Attachment">
+						<slot name="attachment-btn">
+							<svg class="current-color icon" version="1" viewBox="0 0 16 16">
+						    <path d="M5.985 5.016A.998 1.002 0 0 1 5.001 4c0-2.198 1.797-4.002 3.988-4.002 2.19 0 3.987 1.804 3.987 4.002a.998 1.002 0 1 1-1.996 0 1.98 1.98 0 0 0-1.99-1.999 1.98 1.98 0 0 0-1.992 2 .998 1.002 0 0 1-1.012 1.015zM7.5 12A2.517 2.517 0 0 1 5 9.5a1 1 0 1 1 2 0c0 .288.212.5.5.5.288 0 .5-.212.5-.5a1 1 0 1 1 2 0c0 1.37-1.13 2.5-2.5 2.5z" overflow="visible"/>
+						    <path d="M8.781 5a1 1 0 0 0-.78 1v3.469a1 1 0 1 0 2 0V6a1 1 0 0 0-1.22-1zm3-2a1 1 0 0 0-.78 1v6.813a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-6 0a1 1 0 0 0-.78 1v5.406a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-3 1a1 1 0 0 0-.78 1v6a1 1 0 1 0 2 0V5a1 1 0 0 0-1.22-1z" overflow="visible"/>
+						    <path d="M11.844 10a1 1 0 0 0-.656.406L8.5 14H6.47l-2.69-3.531a1 1 0 1 0-1.562 1.187l3 3.938A1 1 0 0 0 6 16h3a1 1 0 0 0 .813-.406l3-4a1 1 0 0 0-.97-1.594z" overflow="visible"/>
 						</svg>
-					</slot>
-				</button>
+						</slot>
+					</label>
+				</div>
 			</form>
 		</div>
 	</body>
