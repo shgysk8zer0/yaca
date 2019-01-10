@@ -63,8 +63,8 @@ export default class HTMLChatLogElement extends HTMLElement {
 		const figCap = document.createElement('figcaption');
 		a.classList.add('inline-block', 'btn');
 		a.download = name;
+		a.dataset.size = size;
 		time = new Date(time);
-		console.log({size, contentType, time, data, name});
 		img.src = `data:${contentType};base64,${btoa(data)}`;
 		a.href = img.src;
 		a.role = 'button';

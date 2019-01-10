@@ -85,7 +85,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 				this.socket.addEventListener('message', msg => {
 					const json = JSON.parse(msg.data);
-					console.log(json);
 					switch (json.event) {
 					case 'message':
 						let {message, contentType = 'text/plain', time = new Date()} = JSON.parse(msg.data);
@@ -99,41 +98,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 						try {
 							let {size, contentType, time, data, name, message = '', action = 'received'} = json;
 							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, message, action}}));
-							// const a = document.createElement('a');
-							// a.classList.add('inline-block', 'btn');
-							// a.download = name;
-							// time = new Date(time);
-							// console.log({size, contentType, time, data, name});
-							// const img = document.createElement('img');
-							// img.src = `data:${contentType};base64,${btoa(data)}`;
-							// a.href = img.src;
-							// a.role = 'button';
-							// a.textContent = `Download "${name}"`;
-							// img.alt = name;
-							// const figure = document.createElement('figure');
-							// const timeEl = document.createElement('time');
-							// const figCap = document.createElement('figcaption');
-							// timeEl.textContent = time.toLocaleString();
-							// timeEl.dateTime = time.toISOString();
-							// timeEl.hidden = true;
-							// figure.addEventListener('click', () => timeEl.hidden = ! timeEl.hidden);
-							// figure.slot = 'messages';
-							// figure.classList.add('message', 'received');
-							// if (message !== '') {
-							// 	const p = document.createElement('p');
-							// 	p.textContent = message;
-							// 	figCap.append(p);
-							// }
-							// figCap.append(timeEl, a);
-							// img.addEventListener('load', () => {
-							// 	img.addEventListener('dblclick', () => open(img.src));
-							// 	img.classList.add('cursor-pointer');
-							// 	URL.revokeObjectURL(img.src);
-							// 	figure.append(img, figCap);
-							// 	figure.scrollIntoView({block: 'start', behavior: 'smooth'});
-							// }, {once: true});
-							// img.addEventListener('error', console.error);
-							// this.messageContainer.append(figure);
 						} catch (err) {
 							console.error(err);
 						}
@@ -301,7 +265,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 				}));
 				reader.addEventListener('error', reject);
 				reader.readAsBinaryString(attachment);
-
 			}
 		});
 		this.socket.send(JSON.stringify(msg));
