@@ -1,6 +1,7 @@
 // import {importLink} from '../../js/functions.js';
 import {notify, importLink} from '../../js/std-js/functions.js';
 import '../chat-log/chat-log.js';
+import '../chat-message/chat-message.js';
 
 export default class HTMLChatAppElement extends HTMLElement {
 
@@ -49,6 +50,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.addEventListener('attachment', async event => {
 			await this.connected;
 			this.messageContainer.addAttachment(event.detail);
+			console.log(event.detail);
 			if (event.detail.action === 'received' && document.visibilityState !== 'visible' || ! this.open) {
 				let {name, data} = event.detail;
 				const notification = await notify('Attachment Received', {
@@ -69,6 +71,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 			this.socket.close();
 			this.socket = undefined;
 		}
+	}
+
+	toJSON() {
+		return this.messages;
 	}
 
 	async connect() {
@@ -102,6 +108,45 @@ export default class HTMLChatAppElement extends HTMLElement {
 						} catch (err) {
 							console.error(err);
 						}
+						break;
+					case 'notify':
+						const {title, body, icon = new URL('img/chat.svg', document.baseURI)} = json;
+						notify(title, {body, icon});
+						break;
+					case 'meta':
+						if ('label' in json) {
+							this.label = json.label;
+						}
+						if ('header-background' in json)  {
+							this.headerBackground = json['header-background'];
+						}
+						if ('header-color' in json) {
+							this.headerColor = json['header-color'];
+						}
+						break;
+					case 'hide':
+						this.hidden = true;
+						break;
+					case 'show':
+						this.hidden = false;
+						break;
+					case 'open':
+						open(json.url);
+						break;
+					case 'log':
+						console.log(json.data);
+						break;
+					case 'info':
+						console.info(json.data);
+						break;
+					case 'table':
+						console.table(json.data);
+						break;
+					case 'warn':
+						console.warn(json.data);
+						break;
+					case 'error':
+						console.error(json.data);
 						break;
 					default: throw new Error(`Unhandled event: "${json.event}"`);
 					}
@@ -249,7 +294,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.socket.send(JSON.stringify({message: text, contentType, event, time: time.toISOString()}));
 	}
 
-	async attach({attachment, time = new Date(), message = ''}) {
+	async attach({attachment, time = new Date(), text = ''}) {
 		const msg = await new Promise((resolve, reject) => {
 			if (! (attachment instanceof File)) {
 				reject(new TypeError('Attachment must be a File'));
@@ -262,7 +307,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 					name: attachment.name,
 					data: event.target.result,
 					time,
-					message,
+					text,
 				}));
 				reader.addEventListener('error', reject);
 				reader.readAsDataURL(attachment);

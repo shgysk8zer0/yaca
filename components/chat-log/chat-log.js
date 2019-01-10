@@ -17,30 +17,14 @@ export default class HTMLChatLogElement extends HTMLElement {
 	async addMessage({
 		text = '',
 		action = 'received',
-		contentType = 'text/plain',
+		// contentType = 'text/plain',
 		date = new Date(),
 	} = {}) {
-		const el = document.createElement('div');
-		const p = document.createElement('p');
-		const time = document.createElement('time');
-		switch (contentType) {
-		case 'text/plain':
-			p.textContent = text;
-			break;
-		case 'text/html':
-			p.innerHTML = text;
-			break;
-		default:
-			console.error(`Unhandled Content-Type: "${contentType}"`);
-		}
-		time.textContent = date.toLocaleString();
-		time.dateTime = date.toISOString();
-		time.hidden = true;
-		el.addEventListener('click', () => time.toggleAttribute('hidden'), {passive: true});
+		await customElements.whenDefined('chat-message');
+		const HTMLChatMessageElement = customElements.get('chat-message');
+		const el = new HTMLChatMessageElement({text, timestamp: date});
 		el.slot = 'messages';
-		el.append(p, time);
 		el.classList.add('message', action);
-
 		el.animate([{
 			opacity: 0,
 		}, {
@@ -55,16 +39,18 @@ export default class HTMLChatLogElement extends HTMLElement {
 		return el;
 	}
 
-	async addAttachment({size, contentType, time, data, name, message = '', action = 'received'} = {}) {
+	async addAttachment({size, contentType, time, data, name, text = '', action = 'received'} = {}) {
 		if (! contentType.startsWith('image/')) {
 			throw new TypeError(`Expected Content-Type to match image but got "${contentType}"`);
 		}
+		await customElements.whenDefined('chat-message');
+		const HTMLChatMessageElement = customElements.get('chat-message');
+		const el = new HTMLChatMessageElement({datetime: time});
+		el.slot = 'messages';
 		const a = document.createElement('a');
 		const img = document.createElement('img');
-		const figure = document.createElement('figure');
-		const timeEl = document.createElement('time');
-		const figCap = document.createElement('figcaption');
 		a.classList.add('inline-block', 'btn');
+		a.slot = 'download-btn';
 		a.download = name;
 		a.dataset.size = size;
 		time = new Date(time);
@@ -72,19 +58,13 @@ export default class HTMLChatLogElement extends HTMLElement {
 		a.href = img.src;
 		a.role = 'button';
 		a.textContent = `Download "${name}"`;
+		a.slot = 'download-btn';
 		img.alt = name;
-		timeEl.textContent = time.toLocaleString();
-		timeEl.dateTime = time.toISOString();
-		timeEl.hidden = true;
-		figure.addEventListener('click', () => timeEl.hidden = ! timeEl.hidden);
-		figure.slot = 'messages';
-		figure.classList.add('message', action);
-		if (message !== '') {
-			const p = document.createElement('p');
-			p.textContent = message;
-			figCap.append(p);
+		el.classList.add('message', action);
+		if (text !== '') {
+			el.text = text;
 		}
-		figCap.animate([{
+		el.animate([{
 			opacity: 0,
 		}, {
 			opacity: 1,
@@ -93,16 +73,16 @@ export default class HTMLChatLogElement extends HTMLElement {
 			easing: 'ease-in-out',
 			fill: 'both',
 		});
-		figCap.append(timeEl, a);
 		img.addEventListener('load', () => {
 			img.addEventListener('dblclick', () => open(img.src));
 			img.classList.add('cursor-pointer');
+			img.slot = 'attachment';
 			URL.revokeObjectURL(img.src);
-			figure.append(img, figCap);
-			figure.scrollIntoView({block: 'start', behavior: 'smooth'});
+			el.append(img, a);
+			el.scrollIntoView({block: 'start', behavior: 'smooth'});
 		}, {once: true});
 		img.addEventListener('error', console.error);
-		this.append(figure);
+		this.append(el);
 	}
 }
 
