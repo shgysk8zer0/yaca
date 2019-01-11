@@ -50,7 +50,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.addEventListener('attachment', async event => {
 			await this.connected;
 			this.messageContainer.addAttachment(event.detail);
-			console.log(event.detail);
 			if (event.detail.action === 'received' && document.visibilityState !== 'visible' || ! this.open) {
 				let {name, data} = event.detail;
 				const notification = await notify('Attachment Received', {
@@ -103,8 +102,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 						break;
 					case 'attachment':
 						try {
-							let {size, contentType, time, data, name, message = '', action = 'received'} = json;
-							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, message, action}}));
+							let {size, contentType, time, data, name, text = '', action = 'received'} = json;
+							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, text, action}}));
 						} catch (err) {
 							console.error(err);
 						}
