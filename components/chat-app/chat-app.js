@@ -1,10 +1,8 @@
-// import {importLink} from '../../js/functions.js';
 import {notify, importLink} from '../../js/std-js/functions.js';
 import '../chat-log/chat-log.js';
 import '../chat-message/chat-message.js';
 
 export default class HTMLChatAppElement extends HTMLElement {
-
 	constructor() {
 		super();
 		this.socket = undefined;
