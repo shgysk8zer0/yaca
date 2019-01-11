@@ -1,4 +1,5 @@
 import {notify, importLink} from '../../js/std-js/functions.js';
+import {confirm} from '../../js/std-js/asyncDialog.js';
 import '../chat-log/chat-log.js';
 import '../chat-message/chat-message.js';
 
