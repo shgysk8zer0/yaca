@@ -6,6 +6,15 @@
 			@import url("/css/core-css/element.css");
 			@import url("/css/core-css/class-rules.css");
 
+			[data-click="close"] {
+				align-self: flex-end;
+			}
+
+			slot[name="label"] {
+				display: inline-block;
+				flex-grow: 1;
+			}
+
 			chat-header {
 				display: block;
 				padding: 0.5em;
@@ -84,8 +93,11 @@
 		</style>
 	</head>
 	<body>
-		<chat-header class="cursor-pointer">
+		<chat-header class="cursor-pointer flex row no-wrap">
 			<slot name="label">Chat</slot>
+			<button type="button" class="btn btn-reject" data-click="exit">
+				<slot name="close-btn">X</slot>
+			</button>
 		</chat-header>
 		<div class="chat-body">
 			<chat-log></chat-log>
@@ -96,21 +108,11 @@
 				<div class="btns flex column">
 					<input type="file" id="chat-attachment" name="attachment" accept="image/*" hidden="" />
 					<button type="submit" class="btn btn-primary">
-						<slot name="submit-btn">
-							<svg class="current-color icon" viewBox="0 0 100.00002 68.498154">
-								<path transform="translate(1.0975e-5 -228.5)" d="m99.856 228.67c-42.323 11.751-97.451 25.768-99.698 29.545 1.8312 2.608 12.556 3.2965 26.523 6.3554 3.5564 21.276 2.6356 32.513 8.6339 32.29 7.2758.18703 17.219-16.371 25.263-23.432 9.1368 2.9512 23.921 9.7657 27.388 8.8386 2.1167-4.8294 12.292-46.589 11.89-53.598zm-3.1623 2.6239-53.328 37.856-7.2143 19.099-3.7342-24.947z" />
-							</svg>
-						</slot>
+						<slot name="submit-btn">&check;</slot>
 					</button>
 					<br />
-					<label for="chat-attachment" role="button" class="btn btn-default" title="Add Attachment">
-						<slot name="attachment-btn">
-							<svg class="current-color icon" viewBox="0 0 16 16">
-								<path d="M5.985 5.016A.998 1.002 0 0 1 5.001 4c0-2.198 1.797-4.002 3.988-4.002 2.19 0 3.987 1.804 3.987 4.002a.998 1.002 0 1 1-1.996 0 1.98 1.98 0 0 0-1.99-1.999 1.98 1.98 0 0 0-1.992 2 .998 1.002 0 0 1-1.012 1.015zM7.5 12A2.517 2.517 0 0 1 5 9.5a1 1 0 1 1 2 0c0 .288.212.5.5.5.288 0 .5-.212.5-.5a1 1 0 1 1 2 0c0 1.37-1.13 2.5-2.5 2.5z" overflow="visible"/>
-								<path d="M8.781 5a1 1 0 0 0-.78 1v3.469a1 1 0 1 0 2 0V6a1 1 0 0 0-1.22-1zm3-2a1 1 0 0 0-.78 1v6.813a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-6 0a1 1 0 0 0-.78 1v5.406a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-3 1a1 1 0 0 0-.78 1v6a1 1 0 1 0 2 0V5a1 1 0 0 0-1.22-1z" overflow="visible"/>
-								<path d="M11.844 10a1 1 0 0 0-.656.406L8.5 14H6.47l-2.69-3.531a1 1 0 1 0-1.562 1.187l3 3.938A1 1 0 0 0 6 16h3a1 1 0 0 0 .813-.406l3-4a1 1 0 0 0-.97-1.594z" overflow="visible"/>
-						</svg>
-						</slot>
+					<label for="chat-attachment" role="button" class="btn btn-primary" title="Add Attachment">
+						<slot name="attachment-btn">+</slot>
 					</label>
 				</div>
 			</form>

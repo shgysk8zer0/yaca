@@ -13,6 +13,15 @@ export default class HTMLChatAppElement extends HTMLElement {
 			[...link.body.children].forEach(child => shadow.append(child.cloneNode(true)));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
+			shadow.querySelector('[data-click="exit"]').addEventListener('click', async event => {
+				event.stopPropagation();
+				if (await confirm('Are you sure you want to close this chat?')) {
+					if (this.socket instanceof WebSocket) {
+						this.socket.close();
+						this.socket = undefined;
+					}
+				}
+			});
 			shadow.querySelector('form').addEventListener('submit', async event => {
 				event.preventDefault();
 				await this.connected;

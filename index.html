@@ -30,9 +30,19 @@
 				<span>&copy;</span>
 				<time is="current-year"></time>
 			</div>
-			<chat-app label="Client 1" style="right:auto;left:5px;" src="ws://localhost:3001/"></chat-app>
-			<chat-app label="Client 2" src="ws://localhost:3000/"></chat-app>
 		</footer>
+		<chat-app label="Client 1" style="right:auto;left:5px;" src="ws://localhost:3001/">
+			<svg class="current-color icon" slot="close-btn">
+				<use xlink:href="img/icons.svg#x" />
+			</svg>
+			<svg class="current-color icon" slot="submit-btn">
+				<use xlink:href="img/icons.svg#share" />
+			</svg>
+			<svg class="current-color icon" slot="attachment-btn">
+				<use xlink:href="img/icons.svg#mail-attachment" />
+			</svg>
+		</chat-app>
+		<chat-app label="Client 2" src="ws://localhost:3000/"></chat-app>
 		<dialog id="login-form-dialog">
 			<login-form>
 				<span slot="legend">Login</span>
