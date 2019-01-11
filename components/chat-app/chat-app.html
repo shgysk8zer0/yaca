@@ -63,6 +63,7 @@
 				margin: 8px;
 				border-radius: 8px;
 				transition: opacity 250ms ease-in-out;
+				width: 80%;
 			}
 
 			.sent {
@@ -91,6 +92,7 @@
 			<form class="flex row">
 				<textarea name="text" placeholder="Type your message here..." required=""></textarea>
 				<input type="hidden" name="event" value="message" />
+				<input type="hidden" name="contentType" value="text/plain" />
 				<div class="btns flex column">
 					<input type="file" id="chat-attachment" name="attachment" accept="image/*" hidden="" />
 					<button type="submit" class="btn btn-primary">

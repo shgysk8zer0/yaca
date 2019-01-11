@@ -1,24 +1,30 @@
 import {importLink} from '../../js/std-js/functions.js';
 export default class HTMLChatMessageElement extends HTMLElement {
-	constructor({text, timestamp}) {
+	constructor({text = '', timestamp, from = '', avatar}) {
 		super();
 		this.attachShadow({mode: 'open'});
 		importLink('chat-message-template').then(async link => {
 			[...link.head.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 			[...link.body.children].forEach(child => this.shadowRoot.append(child.cloneNode(true)));
 			this.addEventListener('click', () => this.getNodes('timestamp').forEach(el => el.toggleAttribute('hidden')));
-			if (text) {
+			if (text !== '') {
 				this.text = text;
 			}
 			if (timestamp) {
 				this.timestamp = timestamp;
 			}
+			if (from !== '') {
+				this.from = from;
+			}
+			if (avatar instanceof HTMLImageElement) {
+				this.avatar = avatar;
+			}
 		});
 	}
 
 	toJSON() {
-		const {text, attachment, timestamp, attachments} = this;
-		return {text, attachment, timestamp, attachments};
+		const {text, attachment, timestamp, attachments, from} = this;
+		return {text, attachment, timestamp, attachments, from};
 	}
 
 	get text() {
@@ -34,8 +40,33 @@ export default class HTMLChatMessageElement extends HTMLElement {
 		const p = document.createElement('p');
 		p.textContent = text;
 		p.slot = 'text';
-		this.getNodes('text').forEach(el => el.remove());
+		this.clearNodes('text');
 		this.append(p);
+	}
+
+	get from() {
+		const nodes = this.getNodes('from');
+		if (nodes.length === 1) {
+			return nodes[0].textContent;
+		} else {
+			return null;
+		}
+	}
+
+	set avatar(img) {
+		if (img instanceof HTMLImageElement) {
+			img.slot = 'avatar';
+			this.clearNodes('avatar');
+			this.append(img);
+		}
+	}
+
+	set from(name) {
+		const sender = document.createElement('b');
+		sender.textContent = name;
+		sender.slot = 'from';
+		this.clearNodes('from');
+		this.append(sender);
 	}
 
 	set attachments(attachment) {
@@ -64,7 +95,7 @@ export default class HTMLChatMessageElement extends HTMLElement {
 		time.dateTime = date.toISOString();
 		time.slot = 'timestamp';
 		time.hidden = true;
-		this.getNodes('timestamp').forEach(el => el.remove());
+		this.clearNodes('timestamp');
 		this.append(time);
 	}
 
@@ -88,6 +119,19 @@ export default class HTMLChatMessageElement extends HTMLElement {
 		} else {
 			return [];
 		}
+	}
+
+	getNode(name) {
+		const nodes = this.getNodes(name);
+		if (nodes.length === 1) {
+			return nodes[0];
+		} else {
+			return null;
+		}
+	}
+
+	clearNodes(name) {
+		this.getNodes(name).forEach(el => el.remove());
 	}
 }
 

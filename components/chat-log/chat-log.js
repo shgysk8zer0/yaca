@@ -23,6 +23,7 @@ export default class HTMLChatLogElement extends HTMLElement {
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
 		const el = new HTMLChatMessageElement({text, timestamp: date});
+		el.classList.add('block');
 		el.slot = 'messages';
 		el.classList.add('message', action);
 		el.animate([{
@@ -45,7 +46,8 @@ export default class HTMLChatLogElement extends HTMLElement {
 		}
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
-		const el = new HTMLChatMessageElement({datetime: time});
+		const el = new HTMLChatMessageElement({text, timestamp: time});
+		el.classList.add('block');
 		el.slot = 'messages';
 		const a = document.createElement('a');
 		const img = document.createElement('img');
@@ -54,6 +56,7 @@ export default class HTMLChatLogElement extends HTMLElement {
 		a.download = name;
 		a.dataset.size = size;
 		time = new Date(time);
+		img.decoding = 'async';
 		img.src = data;
 		a.href = img.src;
 		a.role = 'button';
@@ -75,7 +78,7 @@ export default class HTMLChatLogElement extends HTMLElement {
 		});
 		img.addEventListener('load', () => {
 			img.addEventListener('dblclick', () => open(img.src));
-			img.classList.add('cursor-pointer');
+			img.classList.add('cursor-pointer', 'card');
 			img.slot = 'attachment';
 			URL.revokeObjectURL(img.src);
 			el.append(img, a);
