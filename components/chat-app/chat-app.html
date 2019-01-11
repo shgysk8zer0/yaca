@@ -35,13 +35,6 @@
 				transition: height 400ms ease-in-out;
 			}
 
-			.btns > * {
-				flex-grow: 1;
-				margin-bottom: 0.1rem;
-				flex-basis: auto;
-				vertical-align: middle;
-			}
-
 			.chat-body.open {
 				overflow-y: auto;
 				height: calc(var(--message-log-height) + var(--message-box-height));
@@ -51,17 +44,13 @@
 				background-color: white;
 				height: var(--message-log-height);
 				display: block;
-				border: 1px solid #343434;
 				overflow: auto;
 			}
 
 			[name="text"] {
-				display: block;
-				height: var(--message-box-height);
-				width: 100%;
+				grid-area: message-box;
 				padding: 0.3em;
 				background-color: white;
-				border: 1px solid #343434;
 				border-radius: 6px;
 			}
 
@@ -90,32 +79,49 @@
 				color: var(--message-received-color, #222222);
 				float: left;
 			}
+
+			form.grid {
+				grid-template-columns: 8fr 1fr;
+				grid-template-rows: repeat(2, calc(var(--message-box-height) / 2));
+				grid-row-gap: 3px;
+				grid-column-gap: 8px;
+				grid-template-areas: 'message-box send-btn'
+				'message-box attachment-btn';
+			}
+
+			.attachment-btn {
+				grid-area: attachment-btn;
+			}
+
+			.send-btn {
+				grid-area: send-btn;
+			}
 		</style>
 	</head>
 	<body>
-		<chat-header class="cursor-pointer flex row no-wrap">
-			<slot name="label">Chat</slot>
-			<button type="button" class="btn btn-reject" data-click="exit">
-				<slot name="close-btn">X</slot>
-			</button>
-		</chat-header>
-		<div class="chat-body">
-			<chat-log></chat-log>
-			<form class="flex row">
-				<textarea name="text" placeholder="Type your message here..." required=""></textarea>
-				<input type="hidden" name="event" value="message" />
-				<input type="hidden" name="contentType" value="text/plain" />
-				<div class="btns flex column">
+		<div class="grid border-box">
+			<chat-header class="chat-header cursor-pointer flex row no-wrap">
+				<slot name="label">Chat</slot>
+				<button type="button" class="btn btn-reject" data-click="exit">
+					<slot name="close-btn">X</slot>
+				</button>
+			</chat-header>
+			<div class="chat-body">
+				<chat-log></chat-log>
+				<form class="grid">
+					<textarea name="text" placeholder="Type your message here..." required=""></textarea>
+					<input type="hidden" name="event" value="message" />
+					<input type="hidden" name="contentType" value="text/plain" />
 					<input type="file" id="chat-attachment" name="attachment" accept="image/*" hidden="" />
-					<button type="submit" class="btn btn-primary">
+					<button type="submit" class="btn btn-primary send-btn">
 						<slot name="submit-btn">&check;</slot>
 					</button>
 					<br />
-					<label for="chat-attachment" role="button" class="btn btn-primary" title="Add Attachment">
+					<label for="chat-attachment" role="button" class="attachment-btn btn btn-primary" title="Add Attachment">
 						<slot name="attachment-btn">+</slot>
 					</label>
-				</div>
-			</form>
+				</form>
+			</div>
 		</div>
 	</body>
 </html>
