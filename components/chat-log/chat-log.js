@@ -17,12 +17,13 @@ export default class HTMLChatLogElement extends HTMLElement {
 	async addMessage({
 		text = '',
 		action = 'received',
+		from = null,
 		// contentType = 'text/plain',
 		date = new Date(),
 	} = {}) {
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
-		const el = new HTMLChatMessageElement({text, timestamp: date});
+		const el = new HTMLChatMessageElement({text, timestamp: date, from});
 		el.classList.add('block');
 		el.slot = 'messages';
 		el.classList.add('message', action);
@@ -40,13 +41,13 @@ export default class HTMLChatLogElement extends HTMLElement {
 		return el;
 	}
 
-	async addAttachment({size, contentType, time, data, name, text = '', action = 'received'} = {}) {
+	async addAttachment({size, contentType, time, data, name, text = '', action = 'received', from = null} = {}) {
 		if (! contentType.startsWith('image/')) {
 			throw new TypeError(`Expected Content-Type to match image but got "${contentType}"`);
 		}
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
-		const el = new HTMLChatMessageElement({text, timestamp: time});
+		const el = new HTMLChatMessageElement({text, timestamp: time, from});
 		el.classList.add('block');
 		el.slot = 'messages';
 		const a = document.createElement('a');

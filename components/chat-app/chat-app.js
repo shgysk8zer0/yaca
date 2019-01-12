@@ -14,6 +14,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 			[...link.body.children].forEach(child => shadow.append(child.cloneNode(true)));
 			this.header = shadow.querySelector('chat-header');
 			this.messageContainer = shadow.querySelector('chat-log');
+			this.nameInput = shadow.querySelector('input[name="from"]');
 			shadow.querySelector('[data-click="exit"]').addEventListener('click', async event => {
 				event.stopPropagation();
 				if (await confirm('Are you sure you want to close this chat?')) {
@@ -33,7 +34,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 					await this.attach(data);
 				} else {
 					data.time = new Date();
-					await this.messageContainer.addMessage({text: data.text, action: 'sent', date: data.time});
+					await this.messageContainer.addMessage({text: data.text, action: 'sent', date: data.time, from: data.from});
 					await this.send(data);
 					this.dispatchEvent(new CustomEvent('message-sent', {detail: data}));
 				}
@@ -45,7 +46,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 		this.addEventListener('message-received', async event => {
 			await this.connected;
-			this.messageContainer.addMessage({text: event.detail.text, action: 'received'});
+			this.messageContainer.addMessage({text: event.detail.text, from: event.detail.from, action: 'received'});
 			if (document.visibilityState !== 'visible' || ! this.open) {
 				const notification = await notify('Message Received', {
 					body: event.detail.text,
@@ -84,6 +85,18 @@ export default class HTMLChatAppElement extends HTMLElement {
 		return this.messages;
 	}
 
+	async paired() {
+		await new Promise(async resolve => {
+			if ((this.socket instanceof WebSocket) && this.socket.paired === true) {
+				resolve();
+			} else {
+				await this.connected;
+				this.socket.paired = true;
+				this.addEventListener('paired', () => resolve(), {once: true});
+			}
+		});
+	}
+
 	async connect() {
 		await new Promise((resolve, reject) => {
 			if (! (this.socket instanceof WebSocket)) {
@@ -101,20 +114,27 @@ export default class HTMLChatAppElement extends HTMLElement {
 					const json = JSON.parse(msg.data);
 					switch (json.event) {
 					case 'message':
-						let {message, contentType = 'text/plain', time = new Date()} = JSON.parse(msg.data);
+						let {message, contentType = 'text/plain', time = new Date(), from = this.name} = JSON.parse(msg.data);
 						this.dispatchEvent(new CustomEvent('message-received', {detail: {
 							text: message,
 							contentType,
 							time,
+							from,
 						}}));
 						break;
 					case 'attachment':
 						try {
-							let {size, contentType, time, data, name, text = '', action = 'received'} = json;
-							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, text, action}}));
+							let {size, contentType, time, data, name, text = '', action = 'received', from = this.name} = json;
+							this.dispatchEvent(new CustomEvent('attachment', {detail: {size, contentType, time, data, name, text, action, from}}));
 						} catch (err) {
 							console.error(err);
 						}
+						break;
+					case 'paired':
+						this.dispatchEvent(new Event('paired'));
+						break;
+					case 'introduce':
+						this.label = json.name;
 						break;
 					case 'notify':
 						const {title, body, icon = new URL('img/chat.svg', document.baseURI)} = json;
@@ -188,6 +208,14 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 	get messages() {
 		return this.messageContainer.messages;
+	}
+
+	get name() {
+		return this.getAttribute('name');
+	}
+
+	set name(name) {
+		this.setAttribute('name', name);
 	}
 
 	get ready() {
@@ -265,6 +293,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 			'label',
 			'header-background',
 			'header-color',
+			'name',
 		];
 	}
 
@@ -291,17 +320,22 @@ export default class HTMLChatAppElement extends HTMLElement {
 			case 'header-color':
 				this.headercolor = newValue;
 				break;
+			case 'name':
+				this.nameInput.value = newValue;
+				await this.paired();
+				this.socket.send(JSON.stringify({event: 'introduce', name: newValue}));
+				break;
 			default:
 				throw new Error(`Unhandled attribute change: ${JSON.stringify({name, oldValue, newValue})}`);
 			}
 		});
 	}
 
-	async send({text = '', contentType = 'text/plain', event = 'message', time = new Date()}) {
-		this.socket.send(JSON.stringify({message: text, contentType, event, time: time.toISOString()}));
+	async send({text = '', contentType = 'text/plain', event = 'message', time = new Date(), from = this.name}) {
+		this.socket.send(JSON.stringify({message: text, contentType, event, time: time.toISOString(), from}));
 	}
 
-	async attach({attachment, time = new Date(), text = ''}) {
+	async attach({attachment, time = new Date(), text = '', from = this.name}) {
 		const msg = await new Promise((resolve, reject) => {
 			if (! (attachment instanceof File)) {
 				reject(new TypeError('Attachment must be a File'));
@@ -315,6 +349,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 					data: event.target.result,
 					time,
 					text,
+					from,
 				}));
 				reader.addEventListener('error', reject);
 				reader.readAsDataURL(attachment);

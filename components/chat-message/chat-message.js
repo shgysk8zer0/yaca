@@ -13,7 +13,7 @@ export default class HTMLChatMessageElement extends HTMLElement {
 			if (timestamp) {
 				this.timestamp = timestamp;
 			}
-			if (from !== '') {
+			if (typeof from === 'string' && from !== '') {
 				this.from = from;
 			}
 			if (avatar instanceof HTMLImageElement) {
