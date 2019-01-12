@@ -1,9 +1,6 @@
 sign-in,img/octicons/sign-in.svg
 sign-out,img/octicons/sign-out.svg
 x,img/octicons/x.svg
-facebook,img/logos/facebook.svg
-twitter,img/logos/twitter.svg
-linkedin,img/logos/linkedin.svg
 call-start,img/adwaita-icons/actions/call-start.svg
 mark-location,img/adwaita-icons/actions/mark-location.svg
 mail-read,img/octicons/mail-read.svg
@@ -16,4 +13,13 @@ network-wireless-offline,img/adwaita-icons/status/network-wireless-offline.svg
 view-refresh,img/adwaita-icons/actions/view-refresh.svg
 send-to,img/adwaita-icons/actions/send-to.svg
 mail-attachment,img/adwaita-icons/status/mail-attachment.svg
+mark-github,img/octicons/mark-github.svg
 share,img/share.svg
+facebook,img/logos/facebook.svg
+twitter,img/logos/twitter.svg
+linkedin,img/logos/linkedin.svg
+pdf,img/logos/pdf.svg
+google-plus,img/logos/google-plus.svg
+youtube,img/logos/youtube.svg
+web-browser,img/adwaita-icons/apps/web-browser.svg
+mail-unread,img/adwaita-icons/status/mail-unread.svg

@@ -36,9 +36,8 @@
 	--header-height: 30vh;
 	--footer-height: auto;
 
-	--header-bg-f: url("https://i.imgur.com/wJZeamR.jpg");
-	--header-bg-h: url("https://i.imgur.com/wJZeamRh.jpg");
-	--header-bg-l: url("https://i.imgur.com/wJZeamRl.jpg");
-	--header-bg-m: url("https://i.imgur.com/wJZeamRm.jpg");
-	--header-bg: var(--header-bg-l);
+	--header-background-full : url("https://shgysk8zer0.github.io/img/background.jpg");
+	--header-background-l: url("https://shgysk8zer0.github.io/img/background-1200.jpg");
+	--header-background-m: url("https://shgysk8zer0.github.io/img/background-800.jpg");
+	--header-background-s: url("https://shgysk8zer0.github.io/img/background-420.jpg");
 }

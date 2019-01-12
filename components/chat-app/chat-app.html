@@ -6,6 +6,10 @@
 			@import url("/css/core-css/element.css");
 			@import url("/css/core-css/class-rules.css");
 
+			button.background-none {
+				background: none;
+			}
+
 			[data-click="close"] {
 				align-self: flex-end;
 			}
@@ -33,6 +37,7 @@
 				--message-log-height: 38vh;
 				transform-origin: bottom;
 				transition: height 400ms ease-in-out;
+				background-color: var(--chat-bg, #fefefe);
 			}
 
 			.chat-body.open {
@@ -102,7 +107,7 @@
 		<div class="grid border-box">
 			<chat-header class="chat-header cursor-pointer flex row no-wrap">
 				<slot name="label">Chat</slot>
-				<button type="button" class="btn btn-reject" data-click="exit">
+				<button type="button" class="background-none" title="Exit chat" data-click="exit">
 					<slot name="close-btn">X</slot>
 				</button>
 			</chat-header>

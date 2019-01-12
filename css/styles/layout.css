@@ -1,27 +1,38 @@
-#header {
-	grid-area: header;
-}
+@import url("./header.css");
+@import url("./nav.css");
 
-#nav {
-	grid-area: nav;
-}
-
+@import url("./footer.css");
 main {
 	grid-area: main;
+	margin: 1.2em;
 }
 
 #sidebar {
 	grid-area: sidebar;
+	background: #ececec;
+	margin: 1.2em 0 1.2em 0;
+	border-radius: 4px 0 0 4px;
+	border: 1px solid #cecece;
 }
 
-#footer {
-	grid-area: footer;
+body {
+	min-height: 100vh;
+	grid-template-columns: 2fr 75fr 23fr;
+	grid-template-rows: minmax(calc(100vh - var(--nav-height)), auto) var(--nav-height);
+	grid-template-areas: 'header header header'
+	'nav nav nav'
+	'. main sidebar'
+	'footer footer footer';
 }
 
 chat-app {
-	position: absolute;
-	display: inline-block;
-	bottom: 0;
-	right: 5px;
 	width: 400px;
+}
+
+chat-app.left {
+	left: 5px;
+}
+
+chat-app.right {
+	right: 5px;
 }

@@ -19,6 +19,14 @@ export default class HTMLChatMessageElement extends HTMLElement {
 			if (avatar instanceof HTMLImageElement) {
 				this.avatar = avatar;
 			}
+
+			if (navigator.clipboard !== undefined && navigator.clipboard.writeText instanceof Function) {
+				this.getSlot('text').addEventListener('click', async event => {
+					event.stopPropagation();
+					navigator.clipboard.writeText(this.text);
+				});
+				this.getSlot('text').classList.add('cursor-copy');
+			}
 		});
 	}
 

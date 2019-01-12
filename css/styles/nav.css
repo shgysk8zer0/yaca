@@ -1,0 +1,45 @@
+#nav {
+	font-size: 1.5rem;
+	background-image: linear-gradient(#444, #222);
+	border-radius: 0 0 1rem 1rem;
+	grid-area: nav;
+	border-top: 0.2rem solid var(--accent-color);
+	height: var(--nav-height);
+	line-height: var(--nav-height);
+}
+
+#nav > * {
+	flex: 2 0 auto;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-content: center;
+	justify-items: center;
+}
+
+#nav a > * {
+	margin: auto;
+}
+
+#nav .mobile-hidden {
+	margin-left: 0.6rem;
+}
+
+#nav > *:first-child {
+	border-radius: 0 0 0 1rem;
+	flex-grow: 1;
+}
+
+#nav > *:last-child {
+	border-radius: 0 0 1rem 0;
+}
+
+#nav > *:not(:last-child) {
+	border-right: 2px solid var(--accent-color);
+}
+
+#nav > *:hover {
+	background-image: linear-gradient(#222, #444);
+}
+
+
