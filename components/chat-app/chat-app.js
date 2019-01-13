@@ -30,7 +30,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 				const form = new FormData(event.target);
 				const data = Object.fromEntries(form.entries());
 				event.target.reset();
-				if (data.attachment instanceof File) {
+
+				if (data.attachment instanceof File && data.attachment.size !== 0) {
 					await this.attach(data);
 				} else {
 					data.time = new Date();
@@ -287,6 +288,14 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.setAttribute('label', label);
 	}
 
+	get disabled() {
+		return this.hasAttribute('disabled');
+	}
+
+	set disabled(disabled) {
+		this.toggleAttribute('disabled', disabled);
+	}
+
 	static get observedAttributes() {
 		return [
 			'open',
@@ -294,11 +303,13 @@ export default class HTMLChatAppElement extends HTMLElement {
 			'header-background',
 			'header-color',
 			'name',
+			'disabled',
 		];
 	}
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		/*eslint no-case-declarations: 0*/
+		console.log({name, newValue, oldValue});
 		this.ready.then(async () => {
 			switch(name) {
 			case 'label':
@@ -309,9 +320,17 @@ export default class HTMLChatAppElement extends HTMLElement {
 				this.append(el);
 				break;
 			case 'open':
-				this.body.classList.toggle('open', newValue === '');
-				if (newValue === '') {
+				this.body.classList.toggle('open', newValue === '') && ! this.disabled;
+				if (newValue !== null) {
 					this.body.querySelector('[name="text"]').focus();
+				}
+				break;
+			case 'disabled':
+				if (newValue !== null) {
+					this.open = false;
+					this.classList.add('no-pointer-events', 'cursor-not-allowed');
+				} else {
+					this.classList.remove('no-pointer-events', 'cursor-not-allowed');
 				}
 				break;
 			case 'header-background':

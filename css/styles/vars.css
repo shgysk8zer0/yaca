@@ -14,7 +14,7 @@
 	--button-color: var(--alt-color);
 	--button-border: none;
 	--button-border-radius: 0.15rem;
-	--button-padding: 0.2em 1.2em;
+	--button-padding: 0.2em;
 
 	--button-active-background: #1048a1;
 	--button-active-color: var(--button-color);
@@ -35,6 +35,8 @@
 	--nav-height: 2rem;
 	--header-height: 30vh;
 	--footer-height: auto;
+
+	--icon-size: 1em;
 
 	--header-background-full : url("https://shgysk8zer0.github.io/img/background.jpg");
 	--header-background-l: url("https://shgysk8zer0.github.io/img/background-1200.jpg");

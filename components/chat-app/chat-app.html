@@ -6,6 +6,11 @@
 			@import url("/css/core-css/element.css");
 			@import url("/css/core-css/class-rules.css");
 
+			button, [role="button"] {
+				font-size: var(--button-font-size, inherit);
+				line-height: var(--button-line-height, inherit);
+			}
+
 			button.background-none {
 				background: none;
 			}
@@ -86,7 +91,8 @@
 			}
 
 			form.grid {
-				grid-template-columns: 8fr 1fr;
+				display: grid;
+				grid-template-columns: 6fr 1fr;
 				grid-template-rows: repeat(2, calc(var(--message-box-height) / 2));
 				grid-row-gap: 3px;
 				grid-column-gap: 8px;
@@ -120,11 +126,10 @@
 					<input type="file" id="chat-attachment" name="attachment" accept="image/*" hidden="" />
 					<input type="hidden" name="from">
 					<button type="submit" class="btn btn-primary send-btn">
-						<slot name="submit-btn">&check;</slot>
+						<slot name="submit-btn" class="inline-block">&check;</slot>
 					</button>
-					<br />
 					<label for="chat-attachment" role="button" class="attachment-btn btn btn-primary" title="Add Attachment">
-						<slot name="attachment-btn">+</slot>
+						<slot name="attachment-btn" class="inline-block">+</slot>
 					</label>
 				</form>
 			</div>
