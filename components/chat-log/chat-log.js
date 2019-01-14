@@ -24,6 +24,18 @@ export default class HTMLChatLogElement extends HTMLElement {
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
 		const el = new HTMLChatMessageElement({text, timestamp: date, from});
+		await customElements.whenDefined('gravatar-img');
+		const HTMLGravatarImageElement = customElements.get('gravatar-img');
+		const grav = new HTMLGravatarImageElement({
+			hash: '43578597e449298f5488c2407c8a8ae5',
+			referrerPolicy: 'origin-when-cross-origin',
+			sizes: '2vmin',
+			decoding: 'async',
+			sizeList: [128, 80, 64, 32, 24, 12],
+			defaultSize: 24,
+		});
+		grav.classList.add('round', 'shadow');
+		el.avatar = grav;
 		el.classList.add('block');
 		el.slot = 'messages';
 		el.classList.add('message', action);
@@ -48,6 +60,18 @@ export default class HTMLChatLogElement extends HTMLElement {
 		await customElements.whenDefined('chat-message');
 		const HTMLChatMessageElement = customElements.get('chat-message');
 		const el = new HTMLChatMessageElement({text, timestamp: time, from});
+		await customElements.whenDefined('gravatar-img');
+		const HTMLGravatarImageElement = customElements.get('gravatar-img');
+		const grav = new HTMLGravatarImageElement({
+			hash: '43578597e449298f5488c2407c8a8ae5',
+			referrerPolicy: 'origin-when-cross-origin',
+			sizes: '2vmin',
+			decoding: 'async',
+			sizeList: [128, 80, 64, 32, 24, 12],
+			defaultSize: 24,
+		});
+		grav.classList.add('round', 'shadow');
+		el.avatar = grav;
 		el.classList.add('block');
 		el.slot = 'messages';
 		const a = document.createElement('a');

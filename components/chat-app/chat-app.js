@@ -20,9 +20,17 @@ export default class HTMLChatAppElement extends HTMLElement {
 				if (await confirm('Are you sure you want to close this chat?')) {
 					if (this.socket instanceof WebSocket) {
 						this.socket.close();
-						this.socket = undefined;
+						this.remove();
 					}
 				}
+			});
+			shadow.querySelector('[name="attachment"]').addEventListener('change', event => {
+				const files = event.target.files;
+				const hasAttachment = (files instanceof FileList) && [...files].some(file => file.size !== 0);
+				event.target.form.querySelector('[name="text"]').required = ! hasAttachment;
+				event.target.form.classList.toggle('has-attachment', hasAttachment);
+			}, {
+				passive: true,
 			});
 			shadow.querySelector('form').addEventListener('submit', async event => {
 				event.preventDefault();
@@ -39,6 +47,12 @@ export default class HTMLChatAppElement extends HTMLElement {
 					await this.send(data);
 					this.dispatchEvent(new CustomEvent('message-sent', {detail: data}));
 				}
+			});
+			shadow.querySelector('form').addEventListener('reset', event => {
+				event.target.classList.remove('has-attachment');
+				event.target.querySelector('[name="text"]').required = true;
+			}, {
+				passive: true,
 			});
 			this.body = shadow.querySelector('.chat-body');
 			this.dispatchEvent(new Event('load'));
@@ -96,6 +110,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 				this.addEventListener('paired', () => resolve(), {once: true});
 			}
 		});
+		this.dispatchEvent(new Event('paired'));
 	}
 
 	async connect() {
@@ -103,11 +118,11 @@ export default class HTMLChatAppElement extends HTMLElement {
 			if (! (this.socket instanceof WebSocket)) {
 				this.socket = new WebSocket(this.src);
 
-				this.socket.addEventListener('close', event => {
-					this.remove();
+				this.socket.addEventListener('close', async event => {
 					this.socket = undefined;
+					this.dispatchEvent(new Event('disconnect'));
 					notify('Connection closed', {
-						body: event.reason || 'Try refreshing the page to reconnect',
+						body: event.reason || 'Click to to reconnect',
 					});
 				});
 
@@ -189,6 +204,7 @@ export default class HTMLChatAppElement extends HTMLElement {
 				resolve(this.socket);
 			}
 		});
+		this.dispatchEvent(new Event('connect'));
 	}
 
 	get headerBackground() {
@@ -309,7 +325,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		/*eslint no-case-declarations: 0*/
-		console.log({name, newValue, oldValue});
 		this.ready.then(async () => {
 			switch(name) {
 			case 'label':

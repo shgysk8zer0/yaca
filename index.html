@@ -21,8 +21,24 @@
 		<link rel="import" href="components/registration-form/registration-form.html" name="registration-form-template" async="" />
 	</head>
 	<body class="grid background-primary color-default font-main border-box smooth-scroll">
-		<header id="header"></header>
-		<nav id="nav"></nav>
+		<header id="header" class="center">
+			<img is="gravatar-img"
+				hash="43578597e449298f5488c2407c8a8ae5"
+				alt="Gravatar"
+				title="Chris Zuber (Gravatar)"
+				sizes="(orientation: portrait) 30vw, 15vw"
+				crossorigin="anonymous"
+				referrerpolicy="origin-when-cross-origin"
+				decoding="async"
+				class="round shadow-dark" />
+		</header>
+		<nav id="nav" class="clearfix">
+			<button type="button" is="chat-btn" id="start-chat-btn" class="btn btn-primary float-right" enpoint="ws://localhost/" title="Start chat">
+				<svg class="current-color icon">
+					<use xlink:href="img/icons.svg#comment-discussion" />
+				</svg>
+			</button>
+		</nav>
 		<main>
 			<article class="card shadow">
 				<p>Ut iure earum in qui harum aut tempore. Ut neque rerum numquam voluptas cum aut eveniet. Consectetur nesciunt illo et id.</p>
