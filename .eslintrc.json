@@ -6,7 +6,7 @@
     "extends": "eslint:recommended",
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 2017
+        "ecmaVersion": 2018
     },
     "plugins": ["async-await"],
     "rules": {
@@ -24,7 +24,13 @@
         ],
         "no-console": 0,
         "async-await/space-after-async": 2,
-        "async-await/space-after-await": 2
+        "async-await/space-after-await": 2,
+        "generator-star-spacing": ["error", {
+            "before": false,
+            "after": true,
+            "anonymous": "neither",
+            "method": {"before": true, "after": false}
+        }]
     },
     "globals": {
         "URLSearchParams": false,

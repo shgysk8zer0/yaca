@@ -1,12 +1,38 @@
 import {notify, importLink} from '../../js/std-js/functions.js';
-import {confirm} from '../../js/std-js/asyncDialog.js';
+import {confirm, prompt} from '../../js/std-js/asyncDialog.js';
 import '../chat-log/chat-log.js';
 import '../chat-message/chat-message.js';
+
+async function requirePrompt(text, {initial = '', test = resp => resp !== ''} = {}) {
+	let valid = false, resp = '';
+	while (! valid) {
+		resp = await prompt(text, initial);
+		if (! (test instanceof Function) || test(resp)) {
+			valid = true;
+		}
+	}
+	return resp;
+}
 
 export default class HTMLChatAppElement extends HTMLElement {
 	constructor() {
 		super();
 		this.socket = undefined;
+		this.addEventListener('connect', () => {
+			const onlineIcon = this.header.querySelector('slot[name="online-icon"]');
+			const offlineIcon = this.header.querySelector('slot[name="offline-icon"]');
+			onlineIcon.hidden = false;
+			offlineIcon.hidden = true;
+			if (this.name !== null) {
+				this.socket.send(JSON.stringify({event: 'introduce', name: this.name}));
+			}
+		});
+		this.addEventListener('disconnect', () => {
+			const onlineIcon = this.header.querySelector('slot[name="online-icon"]');
+			const offlineIcon = this.header.querySelector('slot[name="offline-icon"]');
+			onlineIcon.hidden = true;
+			offlineIcon.hidden = false;
+		});
 		const shadow = this.attachShadow({mode: 'closed'});
 		importLink('chat-app-template').then(async link => {
 			await customElements.whenDefined('chat-log');
@@ -19,8 +45,8 @@ export default class HTMLChatAppElement extends HTMLElement {
 				event.stopPropagation();
 				if (await confirm('Are you sure you want to close this chat?')) {
 					if (this.socket instanceof WebSocket) {
-						this.socket.close();
-						this.remove();
+						this.disconnect();
+						this.label = 'Offline';
 					}
 				}
 			});
@@ -56,7 +82,13 @@ export default class HTMLChatAppElement extends HTMLElement {
 			});
 			this.body = shadow.querySelector('.chat-body');
 			this.dispatchEvent(new Event('load'));
-			this.header.addEventListener('click', () => this.toggleAttribute('open'));
+			this.header.addEventListener('click', () => {
+				if (this.socket instanceof WebSocket) {
+					this.toggleAttribute('open');
+				} else {
+					this.connect();
+				}
+			});
 		});
 
 		this.addEventListener('message-received', async event => {
@@ -85,10 +117,6 @@ export default class HTMLChatAppElement extends HTMLElement {
 		});
 	}
 
-	connectedCallback() {
-		this.connect();
-	}
-
 	disconnectedCallback() {
 		if (this.socket instanceof WebSocket) {
 			this.socket.close();
@@ -113,20 +141,38 @@ export default class HTMLChatAppElement extends HTMLElement {
 		this.dispatchEvent(new Event('paired'));
 	}
 
+	disconnect() {
+		if (this.socket instanceof WebSocket) {
+			this.socket.close();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	async connect() {
-		await new Promise((resolve, reject) => {
+		await new Promise(async (resolve, reject) => {
+			if (this.name === null) {
+				this.name = await requirePrompt('Please enter your name.');
+			}
+
 			if (! (this.socket instanceof WebSocket)) {
+				this.label = 'Waiting for connection';
 				this.socket = new WebSocket(this.src);
 
 				this.socket.addEventListener('close', async event => {
 					this.socket = undefined;
+					this.open = false;
 					this.dispatchEvent(new Event('disconnect'));
 					notify('Connection closed', {
 						body: event.reason || 'Click to to reconnect',
 					});
 				});
 
-				this.socket.addEventListener('message', msg => {
+				this.socket.addEventListener('message', async msg => {
+					if (typeof msg.data !== 'string') {
+						return;
+					}
 					const json = JSON.parse(msg.data);
 					switch (json.event) {
 					case 'message':
@@ -149,6 +195,11 @@ export default class HTMLChatAppElement extends HTMLElement {
 					case 'paired':
 						this.dispatchEvent(new Event('paired'));
 						break;
+					case 'prompt':
+						const {text, initial = ''} = json;
+						this.socket.send(await requirePrompt(text, {initial}));
+						break;
+
 					case 'introduce':
 						this.label = json.name;
 						break;
@@ -195,9 +246,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 					}
 				});
 
-				this.socket.addEventListener('connect', () => resolve(this.socket));
+				this.socket.addEventListener('open', () => resolve(this.socket));
 				this.socket.addEventListener('error', event => {
-					this.socket.close();
+					this.socket.close(1011, event);
+					console.error(event);
 					reject(event);
 				});
 			} else {
@@ -205,6 +257,10 @@ export default class HTMLChatAppElement extends HTMLElement {
 			}
 		});
 		this.dispatchEvent(new Event('connect'));
+	}
+
+	get online() {
+		return this.socket instanceof WebSocket && this.socket.readyState === WebSocket.OPEN;
 	}
 
 	get headerBackground() {

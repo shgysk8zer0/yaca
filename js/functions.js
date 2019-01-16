@@ -1,5 +1,6 @@
 import {prompt} from './std-js/asyncDialog.js';
 import {wait} from './std-js/functions.js';
+
 export async function attachChat({
 	endpoint = 'ws://localhost',
 	port     = NaN,
@@ -14,7 +15,6 @@ export async function attachChat({
 		'shadow-dark',
 	],
 } = {}) {
-
 	[...parent.querySelectorAll('chat-app')].forEach(el => el.remove());
 	await customElements.whenDefined('chat-app');
 	await Promise.all(promises);
@@ -25,6 +25,10 @@ export async function attachChat({
 	chat.append(btns.cloneNode(true));
 
 	(async chat => {
+		while (name === '') {
+			name = await prompt('Enter your name');
+		}
+
 		while (Number.isNaN(port)) {
 			port = parseInt(await prompt('Enter port #', navigator.vendor === '' ? 3000 : 3001));
 		}
@@ -33,9 +37,6 @@ export async function attachChat({
 		chat.src = src.href;
 		chat.classList.add(...classes);
 
-		while (name === '') {
-			name = await prompt('Enter your name');
-		}
 		chat.name = name;
 		chat.label = 'Waiting for connection';
 		chat.disabled = true;
@@ -47,4 +48,18 @@ export async function attachChat({
 	})(chat);
 
 	return chat;
+}
+
+export async function sleep(t) {
+	await new Promise(resolve => setTimeout(() => resolve(), t));
+}
+
+export function* fibinacci(terms = Infinity) {
+	let current = 1, prev = 1;
+	yield prev;
+
+	while (--terms > 0 && current <= Number.MAX_SAFE_INTEGER) {
+		yield current;
+		[current, prev] = [prev + current, current];
+	}
 }

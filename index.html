@@ -21,23 +21,13 @@
 		<link rel="import" href="components/registration-form/registration-form.html" name="registration-form-template" async="" />
 	</head>
 	<body class="grid background-primary color-default font-main border-box smooth-scroll">
-		<header id="header" class="center">
-			<img is="gravatar-img"
-				hash="43578597e449298f5488c2407c8a8ae5"
-				alt="Gravatar"
-				title="Chris Zuber (Gravatar)"
-				sizes="(orientation: portrait) 30vw, 15vw"
-				crossorigin="anonymous"
-				referrerpolicy="origin-when-cross-origin"
-				decoding="async"
-				class="round shadow-dark" />
-		</header>
+		<header id="header" class="center"></header>
 		<nav id="nav" class="clearfix">
-			<button type="button" is="chat-btn" id="start-chat-btn" class="btn btn-primary float-right" enpoint="ws://localhost/" title="Start chat">
-				<svg class="current-color icon">
-					<use xlink:href="img/icons.svg#comment-discussion" />
-				</svg>
-			</button>
+			<!-- <button type="button" is="chat-btn" id="start-chat-btn" class="btn btn-primary float-right" endpoint="wss://localhost/" title="Start chat"> -->
+			<!-- 	<svg class="current-color icon"> -->
+			<!-- 		<use xlink:href="img/icons.svg#comment-discussion" /> -->
+			<!-- 	</svg> -->
+			<!-- </button> -->
 		</nav>
 		<main>
 			<article class="card shadow">
@@ -48,7 +38,9 @@
 				<p>Quasi ut aspernatur iste officia aut quia quia non. Omnis quo eligendi ut nobis nam ipsam voluptas nihil. Ex voluptatem quia iusto dolor distinctio temporibus provident. Voluptas a aut ducimus modi assumenda. Perferendis et tempore suscipit nihil amet saepe.</p>
 			</article>
 		</main>
-		<aside id="sidebar" class="shadow"></aside>
+		<aside id="sidebar" class="shadow">
+			<fibinacci-list terms="5"></fibinacci-list>
+		</aside>
 		<footer id="footer" class="color-alt no-text-decoration optimize-speed" role="contentinfo">
 			<div class="flex row wrap">
 				<ul>
@@ -130,22 +122,6 @@
 							<span>GitHub Profile</span>
 						</a>
 					</li>
-					<!-- <li> -->
-					<!-- 	<a href="https://github.com/shgysk8zer0/shgysk8zer0.github.io" title="shgysk8zer0.github.io on GitHub" target="_blank" rel="noopener external" class="inline-block color-inherit"> -->
-					<!-- 		<svg class="icon current-color icon-twirl transition-speed-normal transition-overshoot transition-transform" role="presentation"> -->
-					<!-- 			<use xlink:href="https://shgysk8zer0.github.io/img/icons.svg#repo"></use> -->
-					<!-- 		</svg> -->
-					<!-- 		Repo on GitHub -->
-					<!-- 	</a> -->
-					<!-- </li> -->
-					<!-- <li> -->
-					<!-- 	<a href="https://github.com/shgysk8zer0/shgysk8zer0.github.io/issues" title="Open issues for shgysk8zer0.github.io on Github" target="_blank" rel="noopener external" class="inline-block color-inherit"> -->
-					<!-- 		<svg class="icon current-color icon-twirl transition-speed-normal transition-overshoot transition-transform" role="presentation"> -->
-					<!-- 			<use xlink:href="https://shgysk8zer0.github.io/img/icons.svg#issue-opened"></use> -->
-					<!-- 		</svg> -->
-					<!-- 		<span>Issues on GitHub</span> -->
-					<!-- 	</a> -->
-					<!-- </li> -->
 				</ul>
 			</div>
 			<hr />
@@ -155,7 +131,7 @@
 				<a href="https://shgysk8zer0.github.io">Chris Zuber</a>
 			</p>
 		</footer>
-		<template id="chat-btns-template">
+		<chat-app class="fixed bottom right block shadow-dark" label="Support Chat" src="wss://localhost:3001">
 			<svg viewBox="0 0 12 16" class="current-color icon" slot="close-btn">
 				<path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/>
 			</svg>
@@ -167,9 +143,9 @@
 				<path d="M8.781 5a1 1 0 0 0-.78 1v3.469a1 1 0 1 0 2 0V6a1 1 0 0 0-1.22-1zm3-2a1 1 0 0 0-.78 1v6.813a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-6 0a1 1 0 0 0-.78 1v5.406a1 1 0 1 0 2 0V4a1 1 0 0 0-1.22-1zm-3 1a1 1 0 0 0-.78 1v6a1 1 0 1 0 2 0V5a1 1 0 0 0-1.22-1z" overflow="visible"/>
 				<path d="M11.844 10a1 1 0 0 0-.656.406L8.5 14H6.47l-2.69-3.531a1 1 0 1 0-1.562 1.187l3 3.938A1 1 0 0 0 6 16h3a1 1 0 0 0 .813-.406l3-4a1 1 0 0 0-.97-1.594z" overflow="visible"/>
 			</svg>
+		</chat-app>
+		<template id="chat-btns-template">
 		</template>
-		<!-- <chat-app label="Client 1" name="Firefox" class="fixed bottom right block shadow-dark" src="ws://localhost:3001/"></chat-app> -->
-		<!-- <chat-app label="Client 2" name="Fred" class="fixed bottom left block shadow-dark" src="ws://localhost:3000/"></chat-app> -->
 		<dialog id="login-form-dialog">
 			<login-form>
 				<span slot="legend">Login</span>
