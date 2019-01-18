@@ -1,7 +1,7 @@
 @import url("./header.css");
 @import url("./nav.css");
-
 @import url("./footer.css");
+
 main {
 	grid-area: main;
 	margin: 1.2em;
